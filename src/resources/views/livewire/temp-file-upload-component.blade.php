@@ -42,11 +42,11 @@
 				</div>
 			</div>
 
-			@error($name)
+			@if($file_error = ($errors->first($name) ?: $errors->first('file')))
 				<div class="text-danger">
-					{{ $message }}
+					{{ $file_error }}
 				</div>
-			@enderror
+			@endif
 		</label>
 	@endif
 </div>
@@ -57,6 +57,11 @@
 			let progressBar = null;
 			let progress = null;
 			let progressText = null;
+			
+			let uploadingFile = null;			
+			let maxSize = {{ $maxSize ?: 0  }};
+			let maxSizeKb = maxSize / 1024;
+			let maxSizeMb = maxSizeKb / 1024;
 
 			$('#{{$name}}-file').on('livewire-upload-start', function(data) {
 				progressBar = $('#root-{{$name}}').find('#progress-bar');
@@ -67,6 +72,12 @@
 					width: `0%`
 				});
 				$(progressText).text(`0%`);
+
+				try {
+					uploadingFile = $(data.target)[0].files[0];
+				} catch (e) {
+					uploadingFile = null;
+				}
 			})
 
 			$('#{{$name}}-file').on('livewire-upload-progress', function(data) {
@@ -81,7 +92,14 @@
 				let label = $('#root-{{$name}}');
 
 				label.find('.text-danger').remove();
-				label.find('.loader').after('<div class="text-danger">Something went wrong. Please try again latter.</div>');
+
+				let message = 'Something went wrong. Please try again latter.';
+				
+				if(uploadingFile.size > maxSize){
+					message = "{{ $maxSizeValidationMessage }}";
+				}
+
+				label.find('.loader').after('<div class="text-danger">' +  message + '</div>');
 			})
 		})
 	</script>

@@ -19,6 +19,8 @@ class MediaServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // register the helper functions
+        $this->loadHelpers();
     }
 
     /**
@@ -41,8 +43,6 @@ class MediaServiceProvider extends ServiceProvider
         }
     }
 
-
-
     /**
      * Define the routes for the application.
      *
@@ -61,6 +61,14 @@ class MediaServiceProvider extends ServiceProvider
         }
 
         $this->loadRoutesFrom($routeFilePathInUse);
+    }
+
+    /**
+     * Load the helper methods, for convenience.
+     */
+    public function loadHelpers()
+    {
+        require_once __DIR__.'/helpers.php';
     }
 
     public function publishFiles()
