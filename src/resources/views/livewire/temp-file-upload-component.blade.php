@@ -5,6 +5,7 @@
 			@if($canAddMoreFiles)
 				<div class="input-wrapper">
 					{{ $config['defaultText'] }}
+					<span><br><small>{{ $config['info_message'] }}</small></span>
 					<input accept="{{ $config['accept'] }}" type="file" id="{{$name}}-file" type="file" wire:model="file" class="d-none">
 				</div>
 			@endif
@@ -43,7 +44,7 @@
 			</div>
 
 			@if($file_error = ($errors->first($name) ?: $errors->first('file')))
-				<div class="text-danger">
+				<div class="text-danger" wire:loading.remove>
 					{{ $file_error }}
 				</div>
 			@endif

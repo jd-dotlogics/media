@@ -22,23 +22,20 @@ class TempFileUploadComponent extends Component
     public $maxFiles;
     public $total_files = null;
     public $canAddMoreFiles = true;
+
     public $maxSize = null;
     public $maxSizekb = null;
     public $maxSizeMb = null;
     public $maxSizeGb = null;
-
+    public $maxSizeString = null;
     public $maxSizeValidationMessage = null;
 
     public function mount(string $name, array $config=[], $maxFiles=10, $totalFiles = null)
     {
         $this->maxFiles = $maxFiles;
-        $this->maxSize = get_max_file_size_bytes();
-        $this->maxSizeKb = $this->maxSize / 1024;
-        $this->maxSizeMb = $this->maxSizeKb / 1024;
-        $this->maxSizeGb = $this->maxSizeMb / 1024;
-
         $this->name = $name;
         $this->title = Str::replace('_', ' ', $this->name);
+        $this->setMaxSize();
 
         $this->config = array_merge($this->config(), $config);
 
@@ -47,32 +44,7 @@ class TempFileUploadComponent extends Component
             array_merge(
                 old($name,[]), $this->config['files']
             )
-        );
-
-        $size = $this->maxSize;
-        $size_suffix = 'bytes';
-
-        switch(true){
-            case $this->maxSizeGb > 1;
-                $size = $this->maxSizeGb;
-                $size_suffix = 'gigabyte';
-                break;
-            
-            case $this->maxSizeMb > 1;
-                $size = $this->maxSizeMb;
-                $size_suffix = 'megabyte';
-                break;
-            
-            case $this->maxSizeKb > 1;
-                $size = $this->maxSizeKb;
-                $size_suffix = 'kilobytes';
-                break; 
-        }
-
-        $size = number_format($size, 2, '.', '');
-        $size = Str::replace('.00', '', $size);
-
-        $this->maxSizeValidationMessage = "The {$this->title} must not be greater than {$size} {$size_suffix}.";
+        );        
     }
 
     public function render()
@@ -128,17 +100,53 @@ class TempFileUploadComponent extends Component
         $this->canAddMoreFiles = (is_null($this->maxFiles) || ($this->files->count() + $this->total_files) <  $this->maxFiles);
     }
 
-    private function config()
+    protected function config()
     {
         return [
             'classes' => 'd-flex flex-column justify-content-center align-items-center w-100 rounded',
             'styles' => "background-color:#ededed;min-height:70px;text-align:center;cursor:pointer;",
             'defaultText' => 'Click to Select and Upload Files',
+            'info_message' => "Maximum allowed file size is {$this->maxSizeString}.",
             'accept' => implode(',', [
                 '*'
             ]),
             'files' => []
         ];
+    }
+
+    protected function setMaxSize($size = null)
+    {
+        $size = !is_null($size) ? $size : get_max_file_size_bytes();
+
+        $this->maxSize = $size;
+        $this->maxSizeKb = $this->maxSize / 1024;
+        $this->maxSizeMb = $this->maxSizeKb / 1024;
+        $this->maxSizeGb = $this->maxSizeMb / 1024;
+
+        $size_suffix = 'bytes';
+
+        switch(true){
+            case $this->maxSizeGb > 1;
+                $size = $this->maxSizeGb;
+                $size_suffix = 'GB';
+                break;
+            
+            case $this->maxSizeMb > 1;
+                $size = $this->maxSizeMb;
+                $size_suffix = 'MB';
+                break;
+            
+            case $this->maxSizeKb > 1;
+                $size = $this->maxSizeKb;
+                $size_suffix = 'KB';
+                break; 
+        }
+
+        $size = number_format($size, 2, '.', '');
+        $size = Str::replace('.00', '', $size);
+
+        $this->maxSizeString = "{$size} {$size_suffix}";
+        $this->maxSizeValidationMessage = "The {$this->title} must not be greater than {$this->maxSizeString}.";
     }
 
     protected function getListeners()
