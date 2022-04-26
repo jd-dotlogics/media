@@ -64,7 +64,7 @@
 			let maxSizeKb = maxSize / 1024;
 			let maxSizeMb = maxSizeKb / 1024;
 
-			$('#{{$name}}-file').on('livewire-upload-start', function(data) {
+			$(document).on('livewire-upload-start', '#{{$name}}-file', function(data) {
 				progressBar = $('#root-{{$name}}').find('#progress-bar');
 				progress = $(progressBar).find('.progress');
 				progressText = $(progress).find('span');
@@ -81,15 +81,14 @@
 				}
 			})
 
-			$('#{{$name}}-file').on('livewire-upload-progress', function(data) {
+			$(document).on('livewire-upload-progress', '#{{$name}}-file', function(data) {
 				$(progress).css({
 					width: `${data.detail.progress}%`
 				});
 				$(progressText).text(`${data.detail.progress}%`);
 			})
 
-
-			$('#{{$name}}-file').on('livewire-upload-error', function(data) {
+			$(document).on('livewire-upload-error', '#{{$name}}-file', function(data) {
 				let label = $('#root-{{$name}}');
 
 				label.find('.text-danger').remove();
