@@ -2,11 +2,11 @@
 
 namespace Dotlogics\Media\App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Validation\ValidatesRequests;
+use App\Http\Controllers\Controller;
 use Dotlogics\Media\App\Models\TempMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Illuminate\Foundation\Validation\ValidatesRequests;
 
 class MediaController extends Controller
 {
@@ -48,10 +48,11 @@ class MediaController extends Controller
      * @param Media $media
      * @return \Illuminate\Http\Response
      */
-    public function show($media)
+    public function show(Request $request, $media)
     {
-        $media = Media::findOrFail($media);
-        return response()->download($media->getPath(), $media->file_name, [], 'inline');
+        $url = with(new Media)::findOrFail($media)->getFullUrl($request->conversion ?? '');
+
+        return redirect($url, 301);
     }
 
     /**
@@ -83,8 +84,7 @@ class MediaController extends Controller
      */
     public function destroy($media)
     {
-        $media = Media::findOrFail($media);
-        $media->delete();
+        with(new Media)->delete();
         return $this->response(true, "File Deleted");
     }
 
