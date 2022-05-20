@@ -7,11 +7,11 @@
                 </button>
 
                 @if($media->type == 'image')
-                    <img src="{{ route('media.show', $media) }}" style="width: 100px;height:100px;" alt="" class="d-inline-block">
+                    <img src="{{ $media->getFullUrl() }}" style="width: 100px;height:100px;" alt="" class="d-inline-block">
                 @else
                     <br>
                     <br>
-                    <a href="{{ route('media.show', $media) }}" target="_blank">{{ $media->name }}</a>
+                    <a href="{{ $media->getFullUrl() }}" target="_blank">{{ $media->name }}</a>
                 @endif
             </div>
         @endif

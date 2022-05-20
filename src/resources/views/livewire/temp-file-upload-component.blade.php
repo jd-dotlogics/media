@@ -24,7 +24,7 @@
 							<button type="button" wire:click="removeMedia('{{$fileTemp->id}}')" class="btn p-0 rounded-circle btn-danger position-absolute" style="top:0;right:0;width:25px; height:25px;">X</button>
 							
 							@if($file->type == 'image')
-								<img src="{{ route('media.show', $file) }}" class="m-1" style="width: 100px;height:100px;" alt="">
+								<img src="{{ $file->getFullUrl() }}" class="m-1" style="width: 100px;height:100px;" alt="">
 							@else
 								<br>
 								<br>
