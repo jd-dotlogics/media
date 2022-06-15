@@ -61,8 +61,6 @@
 			
 			let uploadingFile = null;			
 			let maxSize = {{ $maxSize ?: 0  }};
-			let maxSizeKb = maxSize / 1024;
-			let maxSizeMb = maxSizeKb / 1024;
 
 			$(document).on('livewire-upload-start', '#{{$name}}-file', function(data) {
 				progressBar = $('#root-{{$name}}').find('#progress-bar');

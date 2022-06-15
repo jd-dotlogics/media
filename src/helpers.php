@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Str;
+
 function to_bytes($val)
 {
     $val = trim($val);
@@ -21,6 +23,17 @@ function to_bytes($val)
     }
 
     return $val;
+}
+
+function bytes_to_human($bytes)
+{
+    $units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    for ($i = 0; $bytes > 1024; $i++) $bytes /= 1024;
+
+    $size = number_format($bytes, 2, '.', '');
+    $size = Str::replace('.00', '', $size);
+
+    return $size . ' ' . $units[$i];
 }
 
 function get_post_max_size_bytes()

@@ -24,9 +24,6 @@ class TempFileUploadComponent extends Component
     public $canAddMoreFiles = true;
 
     public $maxSize = null;
-    public $maxSizekb = null;
-    public $maxSizeMb = null;
-    public $maxSizeGb = null;
     public $maxSizeString = null;
     public $maxSizeValidationMessage = null;
 
@@ -68,7 +65,7 @@ class TempFileUploadComponent extends Component
                         $fail("Cannot add more then {$this->maxFiles} Images");
                     }
                 },
-                'max:' . ($this->maxSizeKb),
+                'max:' . ($this->maxSize / 1024),
             ],
         ], [
             'file.max' => $this->maxSizeValidationMessage,
@@ -116,36 +113,8 @@ class TempFileUploadComponent extends Component
 
     protected function setMaxSize($size = null)
     {
-        $size = !is_null($size) ? $size : get_max_file_size_bytes();
-
-        $this->maxSize = $size;
-        $this->maxSizeKb = $this->maxSize / 1024;
-        $this->maxSizeMb = $this->maxSizeKb / 1024;
-        $this->maxSizeGb = $this->maxSizeMb / 1024;
-
-        $size_suffix = 'bytes';
-
-        switch(true){
-            case $this->maxSizeGb > 1;
-                $size = $this->maxSizeGb;
-                $size_suffix = 'GB';
-                break;
-            
-            case $this->maxSizeMb > 1;
-                $size = $this->maxSizeMb;
-                $size_suffix = 'MB';
-                break;
-            
-            case $this->maxSizeKb > 1;
-                $size = $this->maxSizeKb;
-                $size_suffix = 'KB';
-                break; 
-        }
-
-        $size = number_format($size, 2, '.', '');
-        $size = Str::replace('.00', '', $size);
-
-        $this->maxSizeString = "{$size} {$size_suffix}";
+        $this->maxSize = !is_null($size) ? $size : get_max_file_size_bytes();
+        $this->maxSizeString = bytes_to_human($this->maxSize);
         $this->maxSizeValidationMessage = "The {$this->title} must not be greater than {$this->maxSizeString}.";
     }
 
